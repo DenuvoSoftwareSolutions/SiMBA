@@ -153,11 +153,11 @@ class Simplifier():
 
 
     # Returns true iff a is the sum of s1 and s2 in the modular field.
-    def isSumModulo(self, s1, s2, a):
+    def is_sum_modulo(self, s1, s2, a):
         return s1 + s2 == a or s1 + s2 == a + self.modulus
 
     # Returns true iff a is double b in the modular field.
-    def isDoubleModulo(self, a, b):
+    def is_double_modulo(self, a, b):
         return 2 * b == a or 2 * b == a + self.modulus
 
 
@@ -206,8 +206,8 @@ class Simplifier():
         s = resultSet.copy()
         a = s.pop()
         b = s.pop()
-        aDouble = self.isDoubleModulo(a, b)
-        bDouble = self.isDoubleModulo(b, a)
+        aDouble = self.is_double_modulo(a, b)
+        bDouble = self.is_double_modulo(b, a)
         if not aDouble and not bDouble:
             return ""
 
@@ -253,7 +253,7 @@ class Simplifier():
                     if k == i or k == j:
                         continue
 
-                    if self.isSumModulo(uniqueValues[i], uniqueValues[j], uniqueValues[k]):
+                    if self.is_sum_modulo(uniqueValues[i], uniqueValues[j], uniqueValues[k]):
                         simpler = ""
                         for i1 in [i, j]:
                             simpler = self.append_term_refinement(simpler, bitwiseList, uniqueValues[i1], uniqueValues[k])
