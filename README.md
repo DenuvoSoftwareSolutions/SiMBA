@@ -48,7 +48,7 @@ Since $x*x$ is no linear MBA, the following output would show up in this case:
     *** Expression x*x
     Error: Input expression may be no linear MBA: x*x
 
-If option **-z** is used, the simplification results are finally verified to be equal to the original expressions using *Z3*. This does not effect the command line output as long as the algorithm works correctly or an input expression is no linear MBA and no linearity check is performed:
+If option **-z** is used, the simplification results are finally verified to be equal to the original expressions using *Z3*. This does not effect the command line output as long as the algorithm works correctly unless an input expression is no linear MBA and no linearity check is performed:
 
     python3 src/simplify.py "x*x" -z
 
@@ -76,7 +76,7 @@ In order to simplify expressions stored in a file with path <code>path_to_file</
 That is, the file has to be specified using the option **-f**. Each line of the file has to contain a complex expression as well as an equivalent simpler one, separated by a comma, e.g.:
 
 <pre>
-(x&y) + (x|y), x+y
+(x&y)+(x|y), x+y
 (x|y)-(~x&y)-(x&~y), x&y
 -(a|~b)+(~b)+(a&~b)+b, a^b
 2*(s&~t)+2*(s^t)-(s|t)+2*~(s^t)-~t-~(s&t), s
