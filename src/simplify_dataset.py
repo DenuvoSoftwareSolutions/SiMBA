@@ -80,44 +80,52 @@ def simplify_dataset(datafile, bitCount=64, checkLinear=False, encode=False, use
         cnt = 0
         verified = 0
         equal = 0
+        ignored = 0
 
         for line in fr:
             if cnt == runs:
                 break
 
-            if "#" not in line:
-                line = line.strip()
-                itemList = re.split(",", line)
-                expr = itemList[0]
-                groundtruth = itemList[1]
+            line = line.strip()
+            if "#" in line or not line:
+                continue
 
-                if encode:
-                    (expr, groundtruth) = encode_out_pair(expr, groundtruth, bitCount)
+            itemList = re.split(",", line)
+            if len(itemList) != 2:
+                ignored = ignored + 1
+                continue
+            expr = itemList[0]
+            groundtruth = itemList[1]
 
-                groundtruth = simplify_linear_mba(groundtruth, bitCount, False)
+            if encode:
+                (expr, groundtruth) = encode_out_pair(expr, groundtruth, bitCount)
 
-                cnt = cnt + 1
+            groundtruth = simplify_linear_mba(groundtruth, bitCount, False)
 
-                start = time.perf_counter()
-                simplified = simplify_linear_mba(expr, bitCount, useZ3)
-                dur += time.perf_counter() - start
+            cnt = cnt + 1
 
-                z3res = verify_mba_unsat(groundtruth, simplified, bitCount)
+            start = time.perf_counter()
+            simplified = simplify_linear_mba(expr, bitCount, useZ3)
+            dur += time.perf_counter() - start
 
-                if verbose:
-                    print("    *** " + str(cnt) + " groundtruth " + groundtruth + ", simplified " + simplified + " => equal: " + str(groundtruth == simplified) + ", verified: " + str(z3res))
+            z3res = verify_mba_unsat(groundtruth, simplified, bitCount)
 
-                if z3res:
-                    verified = verified + 1
-                    if groundtruth == simplified:
-                        equal = equal + 1
+            if verbose:
+                print("    *** " + str(cnt) + " groundtruth " + groundtruth + ", simplified " + simplified + " => equal: " + str(groundtruth == simplified) + ", verified: " + str(z3res))
+
+            if z3res:
+                verified = verified + 1
+                if groundtruth == simplified:
+                    equal = equal + 1
 
         if verbose:
             print("")
+        print("  * ignored: " + str(ignored))
         print("  * total count: " + str(cnt))
         print("  * verified: " + str(verified))
         print("  * equal: " + str(equal))
-        avg = (1.0 * dur) / cnt
+        if cnt > 0: avg = (1.0 * dur) / cnt
+        else: avg = 0
         print("  * average duration: " + str(avg))
 
         return cnt, verified, equal
