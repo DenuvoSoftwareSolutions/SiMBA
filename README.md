@@ -1,19 +1,27 @@
-
 # SiMBA
+
 SiMBA is a tool for the simplification of linear mixed Boolean-arithmetic expressions (MBAs). Like [MBA-Blast](https://github.com/softsec-unh/MBA-Blast) and [MBA-Solver](https://github.com/softsec-unh/MBA-Solver/), it uses a fully algebraic approach based on the idea that a linear MBA is fully determined by its values on the set of zeros and ones, but leveraging the new insights that a transformation to the 1-bit-space is not necessary for this.
 
-It is based on the following paper:
+It is based on the following [paper](paper/paper.pdf):
 <pre>@inproceedings{simba2022,
     author = {Reichenwallner, Benjamin and Meerwald-Stadler, Peter},
     title = {Efficient deobfuscation of linear mixed Boolean-arithmetic expressions},
     year = {2022},
-    booktitle = {CheckMATE 2022} 
+    month = nov,
+    address = {Los Angeles, CA, USA},
+    date = {November 7 - 11, 2022},
+    booktitle = {Proceedings of the CheckMATE 2022 workshop, co-located with the ACM Conference on Computer and Communication Security, CCS'22},
+    doi = {10.1145/3560831.3564256},
+    publisher = {ACM},
+    howpublished = {\url{https://arxiv.org/abs/2209.06335}}
 }
 </pre>
 
+Also find [slides](slides/slides.pdf) and a [video recording](slides/video.mp4) of the presentation.
+
 ## Content
 
-Two main programs are provided:
+Two main programs (Python 3) are provided:
 
 - <code>simplify.py</code> for the simplification of single linear MBAs
 - <code>simplify_dataset.py</code> for the simplification of a set of linear MBAs contained in a file and their verification via a comparison with corresponding simpler expressions also contained in this file
@@ -32,14 +40,14 @@ In order to simplify a single expression <code>expr</code>, use
 
     python3 src/simplify.py "x+x" "a&a"
 
-In fact, each command line argument which is no option is considered an expression to be simplified. Note that omitting the quotation marks may imply undesired behavior. The simplification results are printed to the command line as shown in the following:
+In fact, each command line argument which is not an option is considered as an expression to be simplified. Note that omitting the quotation marks may imply undesired behavior. The simplification results are printed to the command line as shown in the following:
 
     *** Expression x+x
     *** ... simplified to 2*x
     *** Expression a
     *** ... simplified to a
 
-Per default no check for the input expressions being linear MBAs is performed. This check can optionally be enabled via the option **-l**:
+Per default no check whether the input expression is a linear MBA is performed. This check can optionally be enabled via the option **-l**:
 
     python3 src/simplify.py "x*x" -l
 
@@ -48,7 +56,7 @@ Since $x*x$ is no linear MBA, the following output would show up in this case:
     *** Expression x*x
     Error: Input expression may be no linear MBA: x*x
 
-If option **-z** is used, the simplification results are finally verified to be equal to the original expressions using *Z3*. This does not effect the command line output as long as the algorithm works correctly unless an input expression is no linear MBA and no linearity check is performed:
+If option **-z** is used, the simplification results are finally verified to be equal to the original expressions using *Z3*. This does not effect the command line output as long as the algorithm works correctly and the input expression is a linear MBA:
 
     python3 src/simplify.py "x*x" -z
 
@@ -75,6 +83,7 @@ In order to simplify expressions stored in a file with path <code>path_to_file</
 
 That is, the file has to be specified using the option **-f**. Each line of the file has to contain a complex expression as well as an equivalent simpler one, separated by a comma, e.g.:
 
+[example-expressions.txt](example-expressions.txt):
 <pre>
 (x&y)+(x|y), x+y
 (x|y)-(~x&y)-(x&~y), x&y
@@ -82,9 +91,9 @@ That is, the file has to be specified using the option **-f**. Each line of the 
 2*(s&~t)+2*(s^t)-(s|t)+2*~(s^t)-~t-~(s&t), s
 </pre>
 
-For each line, both the complex and the simple expression are simplified and finally compared. The reason for simplifying the latter is to make verification results independent of whitespace, the order of factors or summands etc.
+For each line, both the complex and the simple expression are simplified and finally compared. The reason for simplifying the latter is to make verification results independent of whitespace, the order of factors or summands, etc.
 
-As with <code>simplify.py</code>, a linearity check as well as a check for a correct simplification can be enabled using the options **-l** and **-z**, resp., and the number of bits can be specified using option **-b**. If the user wants to run SiMBA on only a certain maximum number of expressions contained in the specified file, this maximum number can be specified via option **-r**:
+As with <code>simplify.py</code>, a linearity check as well as a check for a correct simplification can be enabled using the options **-l** and **-z**, resp., and the number of bits can be specified using option **-b**. If one wants to run SiMBA on only a certain maximum number of expressions contained in the specified file, this maximum number can be specified via option **-r**:
 
     python3 src/simplify_dataset.py -f some_file.txt -r 2
 
@@ -97,7 +106,7 @@ If <code>some_file.txt</code> would contain the expressions listed above, only t
 	  * average duration: 0.00014788552653044462
 
 In any case, the output gives information about
-- the total number of expressions simplified,
+- the total number of expressions in the input,
 - the number of expressions which could be verified to be equivalent to the corresponding simpler expression using Z3 after simplification (unless the simplification result already has the exact same string representation),
 - the number of expressions which are simplified to the very same expression as the corresponding simple expression, and
 - the average runtime in seconds.
@@ -108,7 +117,7 @@ Per default the simplification results are not printed, but only these statistic
 
     python3 src/simplify_dataset.py -f some_file.txt -v
 
-The following output would then be shown in the command line:
+The following output would then be shown:
 
 	Simplify expressions from data/some_file.txt ...
 
@@ -140,7 +149,9 @@ Of course the same function is applied to a pair of expressions in the same line
 	  * equal: 4
 	  * average duration: 0.00019435951253399253
 
-For a reproduction of part of the experiments stated in the paper, one may use any of the dataset files contained in the folder <code>data</code>. For each of the following functions $e_1,\ldots, e_5$, datasets of $1\,000$ equivalent linear MBAs using $2$, $3$ or $4$ variables are provided:
+## Reproducibility
+
+For a reproduction of part of the experiments stated in the paper, one may use any of the dataset files contained in the directory <code>data/</code>. For each of the following functions $e_1,\ldots, e_5$, datasets of $1\,000$ equivalent linear MBAs using $2$, $3$ or $4$ variables are provided:
 
 - $e_1(x,y) = x+y$
 - $e_2 = 49\,374$
@@ -196,8 +207,12 @@ The SMT Solver **Z3** is required
 - by simplify.py if the optional verification of simplified expressions is used. If this option is unused, no error is thrown even if Z3 is not installed.
 
 Installing Z3:
-- from  the Github repository: https://github.com/Z3Prover/z3
+- from  the Github repository: https://github.com/Z3Prover/z3, or
 - on Debian: <code>sudo apt-get install python3-z3</code>
+
+## License
+
+Copyright (c) 2022 Denuvo GmbH, released under [GPLv3](LICENSE).
 
 ## Contact
 - Benjamin Reichenwallner: benjamin(dot)reichenwallner(at)denuvo(dot)com
