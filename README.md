@@ -4,7 +4,7 @@ SiMBA is a tool for the simplification of linear mixed Boolean-arithmetic expres
 
 It is based on the following paper:
 <pre>@inproceedings{simba2022,
-	author = {Reichenwallner, Benjamin and Meerwald-Stadler, Peter},
+    author = {Reichenwallner, Benjamin and Meerwald-Stadler, Peter},
     title = {Efficient deobfuscation of linear mixed Boolean-arithmetic expressions},
     year = {2022},
     booktitle = {CheckMATE 2022} 
