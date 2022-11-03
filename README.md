@@ -11,6 +11,7 @@ It is based on the following [paper](paper/paper.pdf):
     address = {Los Angeles, CA, USA},
     date = {November 7 - 11, 2022},
     booktitle = {Proceedings of the CheckMATE 2022 workshop, co-located with the ACM Conference on Computer and Communication Security, CCS'22},
+    pages = {19--28},
     doi = {10.1145/3560831.3564256},
     publisher = {ACM},
     howpublished = {\url{https://arxiv.org/abs/2209.06335}}
