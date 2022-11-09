@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
+import inspect
 import io
+import os
 import re
 import sys
 import traceback
@@ -117,7 +119,8 @@ class Simplifier():
                     "(X[0]|X[1])"       # [0 1 1 1]
                    ]
 
-        truthfile = "bitwise_list_" + str(self.vnumber) + "vars.txt"
+        currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        truthfile = currentdir + "/bitwise_list_" + str(self.vnumber) + "vars.txt"
         bitwiseExprList = []
 
         with open(truthfile, "r") as fr:
