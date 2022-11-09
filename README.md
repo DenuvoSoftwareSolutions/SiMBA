@@ -18,7 +18,7 @@ It is based on the following [paper](paper/paper.pdf):
 }
 </pre>
 
-Also find [slides](slides/slides.pdf) and a [video recording](slides/video.mp4) of the presentation.
+Find [slides](slides/slides.pdf) and a [video recording](slides/video.mp4) of the presentation. Also available via <a href="https://dl.acm.org/doi/10.1145/3560831.3564256">ACM</a>.
 
 ## Content
 
