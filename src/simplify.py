@@ -120,7 +120,7 @@ class Simplifier():
                    ]
 
         currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        truthfile = currentdir + "/bitwise_list_" + str(self.vnumber) + "vars.txt"
+        truthfile = os.path.join(currentdir, "bitwise_list_" + str(self.vnumber) + "vars.txt")
         bitwiseExprList = []
 
         with open(truthfile, "r") as fr:
