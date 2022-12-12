@@ -212,9 +212,9 @@ class MbaChecker():
             self.get()
             valid, exprType = self.check_inclusive_disjunction()
             if not valid:
-                return False
+                return False, exprType
             if not self.peek() == ')':
-                return False
+                return False, exprType
             self.get()
 
             if exprType == 0:
