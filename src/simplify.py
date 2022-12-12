@@ -45,12 +45,19 @@ class Simplifier():
     # Find all variables included in the stored original expression, store them
     # in a list and replace them by internal variable names.
     def parse_and_replace_variables(self):
+        # List of variables as well as binary or hexadecimal numbers (or
+        # potentially any illegal strings). We include these constants because
+        # we want to make sure not to consider parts of binary or hex numbers
+        # as variable names.
+        varsAndConstants = re.findall(r'[0]?[a-zA-Z][a-zA-Z0-9_]*', self.originalExpression)
+
         # List of variables including multiple occurences.
-        varList = re.findall(r'[a-zA-Z][a-zA-Z0-9_]*', self.originalExpression)
+        varList = [s for s in varsAndConstants if s[0] != '0']
         # Store them in set in order to get rid of duplicates.
         varSet = set(varList)
         # List of unique variables.
         self.originalVariables = list(varSet)
+        
 
         # First sort in alphabetical order since it is nice to have, e.g., 'x'
         # preceding 'y'.
@@ -59,9 +66,33 @@ class Simplifier():
         # order in order not to replace substrings of variables.
         self.originalVariables.sort(key=len)
 
+        # List of binary or hex numbers.
+        constants = [s for s in varsAndConstants if s[0] == '0']
+        # Again remove duplicates for efficiency.
+        constants = list(set(constants))
+        # Sort the constants by length in order not to replace substrings of
+        # larger numbers.
+        constants.sort(key=len)
+        # Finally replace those numbers by their decimal equivalents.
+        for i in range(len(constants) - 1, -1, -1):
+            c = constants[i]
+            assert(len(c) > 1)
+
+            base = 16
+            if c[:2] == "0b" or c[:2] == "0B":
+                base = 2
+            elif c[:2] != "0x" and c[:2] != "0X":
+                sys.exit("Error: Invalid string " + c)
+
+            try:
+                n = int(c, base)
+                self.originalExpression = self.originalExpression.replace(c, str(n))
+            except:
+                sys.exit("Error: Invalid string " + c)
+
         self.vnumber = len(self.originalVariables)
         # Finally replace the variables by 'X<i>'.
-        for i in range(self.vnumber-1, -1, -1):
+        for i in range(self.vnumber - 1, -1, -1):
             self.originalExpression = self.originalExpression.replace(self.originalVariables[i], self.get_vname(i))
 
     # Initialize the group sizes of the various variables, i.e., their numbers
