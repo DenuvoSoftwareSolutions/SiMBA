@@ -221,6 +221,9 @@ class MbaChecker():
                 exprType = 2
             return True, exprType
 
+        if self.has_bitwise_negated_expression():
+            return self.check_bitwise_negated_expression()
+
         valid, exprType = self.check_terminal()
         if exprType == 0:
             exprType = 2
