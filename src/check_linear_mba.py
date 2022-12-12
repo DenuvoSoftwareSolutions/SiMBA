@@ -208,6 +208,10 @@ class MbaChecker():
         # Skip '-'.
         self.get()
 
+        # Allo multiple arithmetic negations.
+        while self.has_negative_expression():
+            self.get()
+
         if self.peek() == '(':
             self.get()
             valid, exprType = self.check_inclusive_disjunction()
