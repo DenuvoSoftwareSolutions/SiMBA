@@ -208,7 +208,7 @@ class MbaChecker():
         # Skip '-'.
         self.get()
 
-        # Allo multiple arithmetic negations.
+        # Allow multiple arithmetic negations.
         while self.has_negative_expression():
             self.get()
 
